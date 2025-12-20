@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Vault Dashboard</title>
+</head>
+
+<body>
+
+<div class="navbar">
+  <div class="nav-container">
+    <div class="logo">Medical Vault</div>
+    <div class="nav-links">
+      <a href="#">Dashboard</a>
+      <a href="#">Analytics</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="hero">
+    <h1>Your Health, Smarter</h1>
+    <p>Track BMI, sugar levels, blood pressure, and monitor trends in real time.</p>
+    <a href="#" class="btn-primary">Get Started</a>
+  </div>
+
+
+<div class="container"></div>
+<h1>Medical Vault Dashboard</h1>
+
+<button id="logoutBtn">Logout</button>
+
+<hr>
+
+<h2>BMI Calculator</h2>
+
+<div>
+  <label for="height">Height (cm)</label><br>
+  <input type="number" id="height">
+</div>
+
+<br>
+
+<div>
+  <label for="weight">Weight (kg)</label><br>
+  <input type="number" id="weight">
+</div>
+
+<br>
+
+<button id="calculateBMI">Calculate BMI</button>
+
+<p id="bmiResult"></p>
+
+<hr>
+
+<h2>Health Inputs</h2>
+
+<div>
+  <label>Sugar Level (mg/dL)</label><br>
+  <input type="number" id="sugarLevel">
+</div>
+
+<br>
+
+<div>
+  <label>Blood Pressure</label><br>
+  <input type="number" id="systolic" placeholder="Systolic">
+  <input type="number" id="diastolic" placeholder="Diastolic">
+</div>
+
+<br>
+
+<button id="saveRecordBtn">Save Record</button>
+
+<hr>
+
+<h2>Health Trends</h2>
+
+<canvas id="bmiChart"></canvas>
+<br>
+<canvas id="sugarChart"></canvas>
+<br>
+<canvas id="bpChart"></canvas>
+
+
+<hr>
+
+<h2>Saved Medical Records</h2>
+
+<table border="1" cellpadding="8">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>BMI</th>
+      <th>Sugar</th>
+      <th>BP</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody id="recordsTableBody">
+    <!-- Records will appear here -->
+  </tbody>
+</table>
+
+<hr>
+
+<h2>Medical Documents</h2>
+
+<input type="file" id="docFile" accept=".pdf,image/*">
+<button id="uploadDocBtn">Upload Document</button>
+
+<p id="docStatus"></p>
+
+<ul id="documentsList"></ul>
+
+
+<!-- 🔥 SCRIPTS (ORDER IS CRITICAL) -->
+
+<!-- 1️⃣ Chart.js FIRST -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- 2️⃣ Auth Guard -->
+<script type="module" src="js/guard.js"></script>
+
+<!-- 3️⃣ BMI Logic -->
+<script src="js/bmi.js"></script>
+
+<!-- 4️⃣ Graphs (Firestore + Chart) -->
+<script type="module" src="js/graphs.js"></script>
+
+<!-- 5️⃣ Save Records -->
+<script type="module" src="js/records.js"></script>
+
+
+<script type="module" src="js/documents.js"></script>
+
+
+
+
+</div>
+<footer>
+  © 2025 Medical Vault · Built with Firebase
+</footer>
+</body>
+</html>

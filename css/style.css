@@ -233,3 +233,49 @@ footer {
     font-size: 32px;
   }
 }
+
+
+/* =========================
+   CHATBOT
+========================= */
+.chatbox {
+  max-width: 600px;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.chat-messages {
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 80%;
+  font-size: 14px;
+}
+
+.user {
+  background: var(--primary);
+  color: white;
+  margin-left: auto;
+}
+
+.bot {
+  background: #f1f5f9;
+  color: var(--text-dark);
+}
+
+.chat-input {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+}

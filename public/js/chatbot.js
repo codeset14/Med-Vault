@@ -60,3 +60,9 @@ sendBtn.addEventListener("click", async () => {
     addMessage("Error connecting to AI.", "bot");
   }
 });
+const aiToggle = document.getElementById("aiToggle");
+const aiPanel = document.getElementById("aiPanel");
+
+aiToggle.addEventListener("click", () => {
+  aiPanel.classList.toggle("open");
+});

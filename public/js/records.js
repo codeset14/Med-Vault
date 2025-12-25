@@ -8,9 +8,9 @@ import {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const saveBtn = document.getElementById("saveRecordBtn");
+  const saveBtn = document.getElementById("saveVitals");
 
-  saveBtn.addEventListener("click", async () => {
+  saveBtn?.addEventListener("click", async () => {
 
     const user = auth.currentUser;
 
@@ -23,8 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const systolic = document.getElementById("systolic").value;
     const diastolic = document.getElementById("diastolic").value;
 
-    if (!window.latestBMI || !sugar || !systolic || !diastolic) {
-      alert("Enter all health values first");
+    // Get BMI from window or default to 0
+    const bmi = window.latestBMI || 0;
+
+    if (!sugar || !systolic || !diastolic) {
+      alert("Enter all vitals (sugar, systolic, diastolic)");
       return;
     }
 
@@ -34,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await addDoc(
         collection(db, "users", user.uid, "healthRecords"),
         {
-          bmi: Number(window.latestBMI),
+          bmi: Number(bmi),
           sugar: Number(sugar),
           systolic: Number(systolic),
           diastolic: Number(diastolic),

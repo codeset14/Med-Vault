@@ -1,30 +1,31 @@
 // js/chatbot.js
 
-const API_KEY = "PASTE_YOUR_GEMINI_API_KEY";
+const API_KEY = "AIzaSyArjErCxO6ETxkqG3ArCnRrlUsr5aZ3dfU";
 const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" +
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
   API_KEY;
 
-const messagesDiv = document.getElementById("chatMessages");
-const input = document.getElementById("userMessage");
-const sendBtn = document.getElementById("sendChatBtn");
-
-function addMessage(text, type) {
-  const div = document.createElement("div");
-  div.classList.add("message", type);
-  div.textContent = text;
-  messagesDiv.appendChild(div);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-sendBtn.addEventListener("click", async () => {
+// Global send function for inline onclick
+window.sendChatMessage = async function() {
+  const messagesDiv = document.getElementById("chatMessages");
+  const input = document.getElementById("userMessage");
+  
   const userText = input.value.trim();
   if (!userText) return;
 
-  addMessage(userText, "user");
+  // Add user message
+  const userDiv = document.createElement("div");
+  userDiv.classList.add("message", "user");
+  userDiv.textContent = userText;
+  messagesDiv.appendChild(userDiv);
   input.value = "";
 
-  addMessage("Thinking...", "bot");
+  // Add thinking message
+  const thinkingDiv = document.createElement("div");
+  thinkingDiv.classList.add("message", "bot");
+  thinkingDiv.textContent = "Thinking...";
+  messagesDiv.appendChild(thinkingDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
   try {
     const response = await fetch(API_URL, {
@@ -50,19 +51,33 @@ sendBtn.addEventListener("click", async () => {
       data.candidates?.[0]?.content?.parts?.[0]?.text ||
       "Sorry, I couldn't answer that.";
 
-    // Remove "Thinking..."
-    messagesDiv.removeChild(messagesDiv.lastChild);
+    // Remove thinking message
+    messagesDiv.removeChild(thinkingDiv);
 
-    addMessage(botReply, "bot");
+    // Add bot reply
+    const botDiv = document.createElement("div");
+    botDiv.classList.add("message", "bot");
+    botDiv.textContent = botReply;
+    messagesDiv.appendChild(botDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (err) {
     console.error(err);
-    messagesDiv.removeChild(messagesDiv.lastChild);
-    addMessage("Error connecting to AI.", "bot");
+    messagesDiv.removeChild(thinkingDiv);
+    const errorDiv = document.createElement("div");
+    errorDiv.classList.add("message", "bot");
+    errorDiv.textContent = "Error connecting to AI.";
+    messagesDiv.appendChild(errorDiv);
   }
-});
-const aiToggle = document.getElementById("aiToggle");
-const aiPanel = document.getElementById("aiPanel");
+};
 
-aiToggle.addEventListener("click", () => {
-  aiPanel.classList.toggle("open");
+// Allow Enter key to send
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("userMessage");
+  if (input) {
+    input.onkeypress = function(e) {
+      if (e.key === "Enter") {
+        window.sendChatMessage();
+      }
+    };
+  }
 });

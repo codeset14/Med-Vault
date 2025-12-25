@@ -5,7 +5,6 @@
   <title>Dashboard · Medical Vault</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/style.css" />
-  <script type="module" src="js/analyze.js"></script>
 </head>
 
 <body>
@@ -17,10 +16,9 @@
   </div>
 </header>
 
-
 <div class="app-layout">
 
-  <!-- SIDEBAR TABS -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <button class="tab" data-tab="appointments">Appointments</button>
     <button class="tab active" data-tab="bmi">Body Assessment</button>
@@ -31,76 +29,75 @@
 
   <!-- CONTENT -->
   <main class="content">
-    <!-- APPOINTMENTS -->
-     <section class="tab-content" id="appointments">
-  <h1>Appointments</h1>
-  <p class="muted">Book a consultation when you need clarity.</p>
 
-  <div class="panel compact">
-    <div class="grid">
-      <select>
-        <option>Select specialist</option>
-        <option>General Physician</option>
-        <option>Nutritionist</option>
-        <option>Endocrinologist</option>
-        <option>Cardiologist</option>
-      </select>
-
-      <input type="date" />
-      <input type="time" />
-    </div>
-
-    <textarea
-      placeholder="Optional note (symptoms, goals, concerns)"
-      rows="3"
-      style="margin-top:12px;width:100%;"
-    ></textarea>
-
-    <div class="panel-actions">
-      <button>Request appointment</button>
-      <span class="muted">Doctor will confirm via email</span>
-    </div>
-  </div>
-</section>
-
-    <!-- SMART BMI / BODY ASSESSMENT -->
+    <!-- BODY ASSESSMENT -->
     <section class="tab-content active" id="bmi">
       <h1>Body Assessment</h1>
-      <p class="muted">Multi-signal body condition analysis.</p>
+      <p class="muted">Accurate body metrics using multiple inputs.</p>
 
+      <!-- BMI CARD -->
       <div class="panel">
+        <h3>BMI & Body Fat</h3>
+
         <div class="grid">
-          <input id="height" placeholder="Height (cm)" />
-          <input id="weight" placeholder="Weight (kg)" />
-          <input placeholder="Age" />
-          <select>
-            <option>Activity level</option>
-            <option>Sedentary</option>
-            <option>Moderate</option>
-            <option>Active</option>
+          <input id="height" type="number" placeholder="Height (cm)" />
+          <input id="weight" type="number" placeholder="Weight (kg)" />
+          <input id="age" type="number" placeholder="Age" />
+
+          <select id="gender">
+            <option value="">Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
           </select>
 
-          <!-- OPTIONAL -->
-          <input id="sugarLevel" placeholder="Sugar (optional)" />
-          <input id="systolic" placeholder="BP systolic (optional)" />
-          <input id="diastolic" placeholder="BP diastolic (optional)" />
+          <select id="activity">
+            <option value="">Activity level</option>
+            <option value="Sedentary">Sedentary</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Active">Active</option>
+          </select>
         </div>
 
-        <div class="inline upload-row">
-  <input type="file" id="bodyImage" />
-  <span class="muted">Upload body image (optional)</span>
+        <div class="upload-row">
+          <label>Body photo (optional)</label>
+          <div class="file-input-wrapper">
+            <label class="file-btn" for="bodyImage">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Choose image
+            </label>
+            <input type="file" id="bodyImage" accept="image/*" />
+            <span class="file-name" id="fileName"></span>
+            <button type="button" class="remove-file" id="removeFile" style="display:none;">Remove</button>
+          </div>
+          <img class="file-preview" id="imagePreview" style="display:none;" />
         </div>
-
 
         <div class="panel-actions">
-          <p class="micro-note">
-  Uses multiple signals + optional image context for higher accuracy.
-     </p>
+          <button id="calculateBMI">Analyze BMI</button>
+          <span id="bmiLoading" class="muted" style="display:none;">Analyzing...</span>
+        </div>
 
-          <input type="file" id="bodyImage" />
-     <button id="analyzeBtn">Analyze</button>
+        <div id="bmiResult" class="analysis-card"></div>
+      </div>
 
-     <div id="analysisResult" class="analysis-card"></div>
+      <!-- VITALS CARD -->
+      <div class="panel">
+        <h3>Blood Sugar & Blood Pressure</h3>
+        <p class="muted">Optional vitals saved separately for trends.</p>
+
+        <div class="grid">
+          <input id="sugarLevel" placeholder="Sugar (mg/dL)" />
+          <input id="systolic" placeholder="BP systolic" />
+          <input id="diastolic" placeholder="BP diastolic" />
+        </div>
+
+        <div class="panel-actions">
+          <button id="saveVitals">Save vitals</button>
+          <span class="muted">Updates history & graphs</span>
+        </div>
+      </div>
     </section>
 
     <!-- TRENDS -->
@@ -108,19 +105,22 @@
       <h1>Trends</h1>
 
       <div class="panel">
+        <h3>BMI Over Time</h3>
         <canvas id="bmiChart"></canvas>
       </div>
 
       <div class="panel">
+        <h3>Blood Sugar Levels</h3>
         <canvas id="sugarChart"></canvas>
       </div>
 
       <div class="panel">
+        <h3>Blood Pressure</h3>
         <canvas id="bpChart"></canvas>
       </div>
     </section>
 
-    <!-- RECORDS -->
+    <!-- HISTORY -->
     <section class="tab-content" id="records">
       <h1>History</h1>
 
@@ -155,19 +155,166 @@
       </div>
     </section>
 
+    <!-- APPOINTMENTS -->
+    <section class="tab-content" id="appointments">
+      <h1>Appointments</h1>
+      <p class="muted">Request a consultation when needed.</p>
+
+      <div class="panel compact">
+        <div class="grid">
+          <select>
+            <option>Select specialist</option>
+            <option>General Physician</option>
+            <option>Nutritionist</option>
+            <option>Endocrinologist</option>
+            <option>Cardiologist</option>
+          </select>
+
+          <input type="date" />
+          <input type="time" />
+        </div>
+
+        <textarea
+          placeholder="Optional note (symptoms, goals, concerns)"
+          rows="3"
+          style="margin-top:12px;width:100%;"
+        ></textarea>
+
+        <div class="panel-actions">
+          <button>Request appointment</button>
+          <span class="muted">Doctor will confirm via email</span>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
 <!-- FLOATING AI ASSISTANT -->
-<button class="ai-fab" id="aiToggle">🤖</button>
+<button class="ai-fab" id="aiToggle" onclick="document.getElementById('aiPanel').classList.toggle('open')">🤖</button>
 
 <div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-header">
+    <span>🤖 Medical Vault Assistant</span>
+    <button class="ai-close" onclick="document.getElementById('aiPanel').classList.remove('open')">×</button>
+  </div>
   <div id="chatMessages" class="chat-messages"></div>
   <div class="chat-input">
-    <input id="userMessage" placeholder="Ask about your results…" />
-    <button id="sendChatBtn">Send</button>
+    <input id="userMessage" placeholder="Ask me anything…" onkeypress="if(event.key==='Enter')document.getElementById('sendChatBtn').click()" />
+    <button type="button" id="sendChatBtn">Send</button>
   </div>
 </div>
+
+<script>
+// Inline chatbot script - Guide Assistant
+(function() {
+  const API_KEY = "AIzaSyDvhQ3Qi9iGs0otkwNhbIp2tRzQm5IYRuw";
+  const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
+
+  const SYSTEM_PROMPT = `You are a friendly and helpful Guide Assistant for Medical Vault, a personal health tracking application.
+
+Your role:
+- Answer ANY questions the user asks - health, general knowledge, app usage, or anything else
+- Be conversational, warm, and helpful
+- Provide accurate and useful information
+- For health-related questions, give general wellness advice (not medical diagnosis)
+- For app-related questions, help users understand how to use Medical Vault features:
+  * Body Assessment: Calculate BMI, body fat, upload optional body photo
+  * Vitals: Track blood sugar and blood pressure
+  * Trends: View charts of health data over time
+  * History: See all recorded health data
+  * Documents: Upload and store medical documents
+  * Appointments: Schedule and manage appointments
+
+Guidelines:
+- Be concise but thorough
+- Use simple, friendly language
+- If unsure, say so honestly
+- For serious medical concerns, recommend consulting a healthcare professional
+- You can answer questions on any topic - not just health!
+
+User's question: `;
+
+  document.getElementById('sendChatBtn').addEventListener('click', async function() {
+    const messagesDiv = document.getElementById('chatMessages');
+    const input = document.getElementById('userMessage');
+    const userText = input.value.trim();
+    
+    if (!userText) return;
+
+    // Add user message
+    const userDiv = document.createElement('div');
+    userDiv.className = 'message user';
+    userDiv.textContent = userText;
+    messagesDiv.appendChild(userDiv);
+    input.value = '';
+
+    // Add thinking
+    const thinkingDiv = document.createElement('div');
+    thinkingDiv.className = 'message bot';
+    thinkingDiv.textContent = 'Thinking...';
+    messagesDiv.appendChild(thinkingDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: SYSTEM_PROMPT + userText
+            }]
+          }]
+        })
+      });
+
+      const data = await response.json();
+      console.log('API Response:', data);
+      
+      // Check for API errors
+      if (data.error) {
+        throw new Error(data.error.message || 'API Error');
+      }
+      
+      const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (!botReply) {
+        // Check if blocked by safety
+        if (data.candidates?.[0]?.finishReason === 'SAFETY') {
+          throw new Error('Response blocked by safety filter');
+        }
+        throw new Error('No response from AI');
+      }
+
+      messagesDiv.removeChild(thinkingDiv);
+
+      const botDiv = document.createElement('div');
+      botDiv.className = 'message bot';
+      botDiv.textContent = botReply;
+      messagesDiv.appendChild(botDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    } catch (err) {
+      console.error('Chatbot error:', err);
+      thinkingDiv.textContent = 'Error: ' + err.message;
+    }
+  });
+
+  // Add welcome message on first open
+  const aiToggle = document.getElementById('aiToggle');
+  let welcomed = false;
+  aiToggle.addEventListener('click', function() {
+    if (!welcomed) {
+      const messagesDiv = document.getElementById('chatMessages');
+      const welcomeDiv = document.createElement('div');
+      welcomeDiv.className = 'message bot';
+      welcomeDiv.textContent = 'Hi! 👋 I\'m your Medical Vault Assistant. Ask me anything about the app, your health, or any other questions you have!';
+      messagesDiv.appendChild(welcomeDiv);
+      welcomed = true;
+    }
+  });
+})();
+</script>
 
 <footer>
   Medical Vault · 2025
@@ -175,11 +322,10 @@
 
 <!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
 <script type="module" src="js/guard.js"></script>
 <script src="js/bmi.js"></script>
-<script type="module" src="js/graphs.js"></script>
 <script type="module" src="js/records.js"></script>
+<script type="module" src="js/graphs.js"></script>
 <script type="module" src="js/documents.js"></script>
 <script src="js/chatbot.js"></script>
 <script src="js/tabs.js"></script>

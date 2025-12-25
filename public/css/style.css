@@ -183,6 +183,37 @@ th, td {
   gap: 8px;
 }
 
+.chat-input input {
+  flex: 1;
+  margin: 0;
+}
+
+.chat-input button {
+  width: auto;
+  padding: 10px 16px;
+  flex-shrink: 0;
+}
+
+/* Chat message styles */
+.message {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  max-width: 85%;
+}
+
+.message.user {
+  background: var(--accent);
+  color: white;
+  margin-left: auto;
+}
+
+.message.bot {
+  background: #f3f4f6;
+  color: var(--ink);
+}
+
 footer {
   text-align: center;
   padding: 40px;
@@ -246,6 +277,7 @@ footer {
   height: 56px;
   font-size: 20px;
   cursor: pointer;
+  z-index: 9999;
 }
 
 /* AI PANEL */
@@ -253,15 +285,58 @@ footer {
   position: fixed;
   bottom: 90px;
   right: 20px;
-  width: 300px;
+  width: 340px;
   background: white;
   border: 1px solid var(--border);
-  padding: 12px;
+  border-radius: 12px;
   display: none;
+  z-index: 9998;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  overflow: hidden;
 }
 
 .ai-panel.open {
-  display: block;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.ai-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+}
+
+.ai-close:hover {
+  opacity: 0.8;
+}
+
+.ai-panel .chat-messages {
+  flex: 1;
+  height: 280px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.ai-panel .chat-input {
+  padding: 12px;
+  border-top: 1px solid var(--border);
 }
 .topbar {
   display: flex;
@@ -313,4 +388,204 @@ footer {
   margin-top: 12px;
   color: #6b7280;
   font-size: 13px;
+}
+
+/* ---------- CHARTS & GRAPHS ---------- */
+#trends .panel {
+  margin-bottom: 24px;
+}
+
+#trends .panel canvas {
+  width: 100% !important;
+  max-height: 280px;
+}
+
+#bmiChart,
+#sugarChart,
+#bpChart {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+/* Chart panel titles */
+#trends .panel h3 {
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* Records table enhancements */
+#records .panel {
+  overflow-x: auto;
+}
+
+#recordsTableBody tr:hover {
+  background: #f9fafb;
+}
+
+#recordsTableBody td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Panel actions row */
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.panel-actions button {
+  width: auto;
+  padding: 10px 20px;
+}
+
+.panel-actions .muted {
+  font-size: 13px;
+}
+
+/* ---------- BMI RESULT STYLES ---------- */
+.bmi-result-grid {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.bmi-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px;
+  background: #f9fafb;
+  border-radius: 8px;
+  min-width: 100px;
+}
+
+.bmi-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.bmi-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bmi-summary {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.bmi-suggestions {
+  background: #f0fdf4;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.bmi-suggestions strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.bmi-suggestions ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.bmi-suggestions li {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* Upload row styling */
+.upload-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.upload-row label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.upload-row input[type="file"] {
+  display: none;
+}
+
+.upload-row .file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-row .file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f3f4f6;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  transition: all 0.2s ease;
+  width: auto;
+}
+
+.upload-row .file-btn:hover {
+  background: #e5e7eb;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.upload-row .file-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.upload-row .file-name {
+  font-size: 13px;
+  color: var(--ink);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-row .file-preview {
+  margin-top: 10px;
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.upload-row .remove-file {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  width: auto;
+}
+
+.upload-row .remove-file:hover {
+  text-decoration: underline;
 }

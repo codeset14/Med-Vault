@@ -1,69 +1,139 @@
 // js/analyze.js
-import { auth } from "./firebaseConfig.js";
+// Purpose:
+// - Collect body assessment inputs
+// - Build AI prompt template
+// - Provide backend-ready hook
+// - Render demo AI output
 
 const analyzeBtn = document.getElementById("analyzeBtn");
 const resultBox = document.getElementById("analysisResult");
 
 analyzeBtn.addEventListener("click", async () => {
-  const height = document.getElementById("height").value;
-  const weight = document.getElementById("weight").value;
-  const age = document.getElementById("age").value;
-  const activity = document.getElementById("activity").value;
-  const sugar = document.getElementById("sugarLevel").value;
-  const sys = document.getElementById("systolic").value;
-  const dia = document.getElementById("diastolic").value;
-  const image = document.getElementById("bodyImage").files[0];
+  const data = collectUserInput();
 
-  if (!height || !weight || !age || !activity) {
-    resultBox.innerHTML = "Please fill required fields.";
+  if (!data.valid) {
+    renderMessage("Please fill height, weight, age, and activity level.");
     return;
   }
 
-  let optionalData = "";
-  if (sugar) optionalData += `- Blood sugar: ${sugar} mg/dL\n`;
-  if (sys && dia) optionalData += `- Blood pressure: ${sys}/${dia}\n`;
-  if (!optionalData) optionalData = "No additional clinical data provided.";
+  renderMessage("Analyzing your health profile…");
 
-  let imageContext = image
-    ? "A body image is provided for visual body composition estimation."
-    : "No body image provided.";
+  const prompt = buildPrompt(data);
 
-  const prompt = `
-You are a health analysis assistant.
+  /**
+   * 🔑 BACKEND NOTE
+   * Replace mockAIResponse(prompt) with:
+   * fetch("/api/analyze", { prompt })
+   * API key MUST stay server-side
+   */
+
+  try {
+    const aiResult = await mockAIResponse(prompt);
+    renderResult(aiResult);
+  } catch (err) {
+    console.error(err);
+    renderMessage("Analysis failed. Please try again.");
+  }
+});
+
+/* ---------- INPUT COLLECTION ---------- */
+function collectUserInput() {
+  const data = {
+    height: val("height"),
+    weight: val("weight"),
+    age: val("age"),
+    activity: val("activity"),
+
+    sugar: val("sugarLevel", true),
+    bpSys: val("systolic", true),
+    bpDia: val("diastolic", true),
+
+    imageProvided: Boolean(
+      document.getElementById("bodyImage")?.files?.length
+    ),
+  };
+
+  data.valid =
+    data.height &&
+    data.weight &&
+    data.age &&
+    data.activity;
+
+  return data;
+}
+
+function val(id, optional = false) {
+  const el = document.getElementById(id);
+  if (!el || !el.value) return optional ? null : "";
+  return el.value.trim();
+}
+
+/* ---------- PROMPT TEMPLATE ---------- */
+function buildPrompt(data) {
+  return `
+You are a calm, privacy-aware health analysis assistant.
 
 User profile:
-- Age: ${age}
-- Height: ${height} cm
-- Weight: ${weight} kg
-- Activity level: ${activity}
+- Age: ${data.age}
+- Height: ${data.height} cm
+- Weight: ${data.weight} kg
+- Activity level: ${data.activity}
 
-Optional health data:
-${optionalData}
+Optional signals:
+- Blood sugar: ${data.sugar || "Not provided"}
+- Blood pressure: ${
+    data.bpSys && data.bpDia
+      ? `${data.bpSys}/${data.bpDia}`
+      : "Not provided"
+  }
 
 Image context:
-${imageContext}
+${data.imageProvided
+  ? "Body image provided for visual context."
+  : "No body image provided."
+}
 
 Tasks:
 1. Estimate BMI and body condition
 2. Explain confidence level
-3. Give 3 practical lifestyle suggestions
-4. Avoid medical diagnosis language
+3. Provide 3 practical lifestyle suggestions
+4. Avoid diagnosis or alarming language
 `;
+}
 
-  resultBox.innerHTML = "Analyzing…";
+/* ---------- MOCK AI (DEMO ONLY) ---------- */
+async function mockAIResponse(prompt) {
+  console.log("AI PROMPT:\n", prompt);
+  await new Promise((r) => setTimeout(r, 1200));
 
-  //  TEMP mock response (replace with real API later)
-  setTimeout(() => {
-    resultBox.innerHTML = `
-      <strong>BMI Estimate:</strong> Normal range<br><br>
-      <strong>Condition:</strong> Balanced body composition based on inputs.<br><br>
-      <strong>Suggestions:</strong>
-      <ul>
-        <li>Maintain consistent activity</li>
-        <li>Track weight weekly</li>
-        <li>Hydration & sleep focus</li>
-      </ul>
-      <span class="confidence">Confidence: Medium (based on provided data)</span>
-    `;
-  }, 1500);
-});
+  return {
+    bmi: "Normal range",
+    condition:
+      "Balanced body composition based on multiple signals.",
+    suggestions: [
+      "Maintain consistent physical activity",
+      "Track trends monthly",
+      "Prioritize sleep and hydration",
+    ],
+    confidence: "Medium",
+  };
+}
+
+/* ---------- UI RENDER ---------- */
+function renderResult(data) {
+  resultBox.innerHTML = `
+    <strong>BMI Estimate:</strong> ${data.bmi}<br><br>
+    <strong>Condition:</strong> ${data.condition}<br><br>
+    <strong>Suggestions:</strong>
+    <ul>
+      ${data.suggestions.map(s => `<li>${s}</li>`).join("")}
+    </ul>
+    <span class="confidence">
+      Confidence level: ${data.confidence}
+    </span>
+  `;
+}
+
+function renderMessage(msg) {
+  resultBox.textContent = msg;
+}
